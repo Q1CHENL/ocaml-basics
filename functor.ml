@@ -1,4 +1,3 @@
-
 (* a Direct defiition of a functor *)
 module DirectFunctor (X : ModuleType) = struct end
 
