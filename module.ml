@@ -13,27 +13,31 @@ end
 (* it can be used to hide certains parts of a module definition*)
 (* here we will hide function second in module DirectModule *)
 module type ModuleType = sig
-  type 'a pair
+  type 'a pair = 'a * 'a
 
-  val paired : 'a -> 'a -> 'a * 'a
-  val first : 'a * 'a -> 'a
+  val paired : 'a -> 'a -> 'a pair
+  val first : 'a pair -> 'a
   (* val second : 'a * 'a -> 'a *)
+end
+
+module TestMod: ModuleType = struct
+  (* why this does not work when type 'a pair = 'a * 'a is defined in ModuleType *)
+  type 'a pair = float * float
 end
 
 (* here we make DirectMoudleHide conforms to the ModuleType, which only has a
    function first, and make it also have the same implementation of DirectModule.
    This way we essentially hide second in DirectModule. In other words, the ModuleType
    provides an another view of DirectModule *)
-
 (* DirectModule must conform to ModuleType, that is to have type 'a pair and function first defined,
-   since it will be the implementation of DirectModuoleHide, which conforms to ModuleType *)
+   since it will be the implementation of DirectModuoleHide, which conforms to ModuleType as well *)
 module DirectModuleHide : ModuleType = DirectModule
 
 (* Usage example: *)
+(* accessible *)
 let mypair = DirectModule.paired 1 2
 let second = DirectModule.second mypair
 
-(* accessible *)
 (* not accessible *)
 
 (* let second = DirectModuleHide.second mypair *)
@@ -77,8 +81,8 @@ module IntStack : StackType with type t = int = struct
 
   let empty = []
 
-  (* push's sig will be int -> int list -> int list when used, because type t = int is
-     specified and push'sig was t -> t list -> t list in the module type *)
+  (* push's sig will be int -> int list -> int list when used its used, because
+     type t = int is specified and push'sig was t -> t list -> t list in the module type *)
   let push x s = x :: s
   let pop = function [] -> None | x :: xs -> Some (x, xs)
 end
@@ -117,11 +121,10 @@ let istack = IntStack.push 2 [ 3 ]
 let sstack = IntStack.push "s" [ "s" ]
 
 module PolyStack = struct
-  type 'a t = 'a list 
+  type 'a t = 'a list
   (* "TODO: ask when its useful to actually define a type though its not really used" *)
 
   let empty = []
   let push x s = x :: s
   let pop = function [] -> None | x :: xs -> Some (x, xs)
 end
-

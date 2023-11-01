@@ -9,6 +9,7 @@ module type FunctorType = functor (X : ModuleType) -> sig
   val div : 'a X.t -> 'a X.t -> 'a X.t
 end
 
+(* a functor type *)
 module Functor : FunctorType =
 functor
   (X : ModuleType)
