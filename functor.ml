@@ -1,4 +1,9 @@
+(* open the module Monoid. If the module name is not the same as the file name, 
+   e.g Module.ml and module Monoid, then should use "open Module" instead, even though 
+   open should be followed with a Module name. That is because ocaml then treats
+   Moudle.ml as a module and Monoid as a submodule of Module.*)
 open Monoid
+
 
 module type MonoidOperations = functor (M : Monoid) -> sig
   val fold : 'a M.t list -> 'a M.t
