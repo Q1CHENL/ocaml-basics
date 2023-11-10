@@ -6,7 +6,7 @@
    plus zero x and plus x zero both return x
 *)
 
-(* given signature:  *)
+(* given signature: *)
 module type Monoid = sig
   type 'a t
 
@@ -14,7 +14,6 @@ module type Monoid = sig
   val plus : 'a t -> 'a t -> 'a t
 end
 
-(* TODO: module ListMonoid *)
 module ListMonoid : Monoid with type 'a t = 'a list = struct
   type 'a t = 'a list
 
@@ -28,7 +27,6 @@ end
 (* passed *)
 let example_listmonoid = ListMonoid.plus [ "a"; "b" ] [ "c"; "d"; "e" ]
 
-(* TODO: module FunctionMonoid *)
 module FunctionMonoid : Monoid with type 'a t = 'a -> 'a = struct
   type 'a t = 'a -> 'a
 
@@ -49,12 +47,7 @@ module type MonoidOperations = functor (M : Monoid) -> sig
   val mul : int -> 'a M.t -> 'a M.t
 end
 
-(* TODO: functor MonoidOperations *)
-module MonoidOperations : MonoidOperations =
-functor
-  (M : Monoid)
-  ->
-  struct
+module MonoidOperations : MonoidOperations = functor (M : Monoid) -> struct
     let fold lst =
       match lst with
       | [] -> M.zero
@@ -81,12 +74,7 @@ let ex_op_2 = Ops.fold []
 let ex_op_3 = Ops.mul 3 [ "a"; "b" ]
 let ex_op_4 = Ops.mul 0 [ "a"; "b" ]
 
-(* TODO: functor FlipMonoid *)
-module FlipMonoid =
-functor
-  (M : Monoid)
-  ->
-  struct
+module FlipMonoid = functor (M : Monoid) -> struct
     type 'a t = 'a M.t
 
     let plus l1 l2 = l2 @ l1
@@ -104,11 +92,7 @@ module F = FlipMonoid (ListMonoid)
 let ex_flip = F.plus [ "a"; "b" ] [ "c"; "d"; "e" ]
 
 (* TODO: functor OptionMonoid *)
-module OptionMonoid =
-functor
-  (M : Monoid)
-  ->
-  struct
+module OptionMonoid = functor (M : Monoid) -> struct
     type 'a t = 'a M.t option
 
     let plus optx opty =
@@ -135,12 +119,7 @@ let ex_option_2 = O.plus (Some [ "a"; "b" ]) None
 let ex_option_3 = O.plus (Some [ "a"; "b" ]) (Some [ "c" ])
 
 (* TODO: functor PairMonoid *)
-module PairMonoid =
-functor
-  (L : Monoid)
-  (R : Monoid)
-  ->
-  struct
+module PairMonoid = functor (L : Monoid) (R : Monoid) -> struct
     type 'a t = 'a L.t * 'a R.t
 
     let zero = (L.zero, R.zero)
