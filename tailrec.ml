@@ -24,6 +24,7 @@ let rec fac_tr n =
     then acc (* return accumulator *)
     else helper (n * acc) (n - 1) in
   helper 1 n
+(* ======================================================================== *)
 
 (* function is always a shorthand for "fun arg -> match arg with" *)
 let rec remove a = function
@@ -38,6 +39,7 @@ in helper [] a lst
 
 let lst = [1; 1; 2; 3; 1; 4; 5; 6]
 let lst = remove_tr 1 lst
+(* ======================================================================== *)
 
 
 (* all elements satisfy p is partitioned into a(the first list), otherwise b(the second list) *)
@@ -60,10 +62,8 @@ let rec partition_tr p l =
       else helper (yes,(x::no)) p xs
     in helper ([],[]) p l 
 
-
   let p a = a > 2
   let lst = [1; 2; 3; 4; 5]
-  
   let part = partition_tr p lst
 
   (* todo: tailrec in exams *)
