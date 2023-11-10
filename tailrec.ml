@@ -14,6 +14,7 @@
    into the recursive call. ==> helper function with additional argument: accumulator (what has been adding so far)
    and we return the accumulatior in the end, cuz its what has been added so far, namely our final result *)
 
+(* Simple rewritings: tutorial 8*)
 let rec fac n = if n = 0 then 1 else n * fac (n - 1)
 
 let rec fac_tr n =
@@ -105,8 +106,7 @@ let rec a cc bs cs ds =
   | b :: bs, c :: cs, d :: ds ->
       if b < c then a (b :: cc) bs (c :: cs) ds
       else if c < b then a (c :: cc) (b :: bs) cs ds
-      else (help d, snd (a cc bs cs ds))
-        (* <-- here the result of help is not directly returned, but used to form a tuple *)
+      else (help d, snd (a cc bs cs ds)) (* <-- here the result of help is not directly returned, but used to form a tuple *)
   | _ -> (0, 1)
 
 (* non-tail recursive *)
@@ -138,8 +138,7 @@ let rec to_list acc = function
   | Leaf -> List.rev acc
   | Node (l, x, r) ->
       let xs = to_list acc l in
-      to_list (x :: xs) r
-(* <--- here the result of to_list is reused for another call of to_list*)
+      to_list (x :: xs) r (* <--- here the result of to_list is reused for another call of to_list*)
 
 (* non-tail recursive *)
 let rec find_along path t =
@@ -147,8 +146,7 @@ let rec find_along path t =
   | Leaf, _ -> []
   | _, [] -> []
   | Node (l, x, r), b :: xs ->
-      if b then x :: find_along xs r
-        (* <--- here the result of find_along is reused for element appending to a list*)
+      if b then x :: find_along xs r (* <--- here the result of find_along is reused for element appending to a list*)
       else x :: find_along xs l (* <--- the same as above *)
 
 (* tail recursive *)
@@ -160,3 +158,54 @@ let rec insert acc y = function
       else insert ((false, x, l) :: acc) y r
 (* <--- immediate returned*)
 (* ------------------------------------------------------------------------ *)
+
+(* Rewriting: Endterm SS23: *)
+(* The function foldr_len takes three arguments: f, z, and xss. The argument xss is a list
+of lists. For each list xs in xss, foldr_len produces a pair: the first element in the
+pair is the result of a right fold over xs using f, with z as the initial value. The
+second element is the length of xs. The resulting pairs are returned in the same order as
+the input list. 
+
+Implement foldr_len_tr, an alternative, tail-recursive definition of foldr_len. 
+
+Your implementation of fold_len_tr must: 
+For any arguments, return the same result as foldr_len, assuming that foldr_len has enough
+stack space. Use constant stack space (independent of the lengths of xss and any nested
+list in xss).
+
+You may not use: 
+functions from the List, ListLabels, or Seq modules. the OCaml  Tail Modulo Cons
+([@tail_mod_cons]) feature (this was not covered in the lecture  and if you don't know
+what it is, you won't accidentally use it).
+*)
+let foldr_len f z xss =
+  let rec inner_helper = function
+  | [] -> z, 0
+  | x :: xs ->
+  let (z', l) = inner_helper xs in
+  (f x z', l + 1)
+  in
+  let rec outer_helper = function
+  | [] -> []
+  | xs :: xss -> inner_helper xs :: outer_helper xss
+  in
+  outer_helper xss
+  (* ------------------------------------------------------------------------ *)
+(* Rewriting: Retake SS23: *)
+(* The function foldrs_i_opt takes three arguments: f, z, and xss. The argument xss is a
+list of lists of 'a option values. For each list xs in xss, the function foldrs_i_opt
+performs a right fold over xs using f, with z as the initial value. Since the elements of
+xs are option values, only the x in Some x are passed to f, and None values are ignored.
+Additionally, the index of each value within xs is passed to f, with the index being
+incremented regardless of whether the value is Some_or None. The values resulting from the
+folds are returned in the same order as the input list. *)
+
+let rec foldrs_i_opt f z =
+  let rec foldr_i_opt i = function
+  | [] -> z
+  | Some x :: xs -> f i x (foldr_i_opt (i + 1) xs)
+  | None :: xs -> foldr_i_opt (i + 1) xs
+  in
+  function
+  | [] -> []
+  | xs :: xss -> foldr_i_opt 0 xs :: foldrs_i_opt f z xss
