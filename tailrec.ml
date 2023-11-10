@@ -66,4 +66,36 @@ let rec partition_tr p l =
   
   let part = partition_tr p lst
 
-  (* todo: tailrec in exams *)
+(* ======================================================================== *)
+(* Retake SS23 *)
+
+(* Multiple choice: which is the following is tail recursive? *)
+type 'a tree = Leaf | Node of 'a tree * 'a * 'a tree
+
+(* non-tail recursive *)
+let rec size acc = function
+| Leaf -> acc
+| Node (l, x, r) -> size (size (acc + 1) l) r (* <--- here the result of size is reused for another call of size*)
+
+(* non-tail recursive *)
+let rec to_list acc = function
+| Leaf -> List.rev acc
+| Node (l, x, r) ->
+let xs = to_list acc l in
+to_list (x :: xs) r (* <--- here the result of to_list is reused for another call of to_list*)
+
+(* non-tail recursive *)
+let rec find_along path t = match t, path with
+| Leaf, _ -> []
+| _, [] -> []
+| Node (l, x, r), b :: xs ->
+if b then x :: find_along xs r (* <--- here the result of find_along is reused for element appending to a list*)
+else x :: find_along xs l (* <--- the same as above *)
+
+(* tail recursive *)
+let rec insert acc y = function
+| Leaf -> acc
+| Node (l, x, r) ->
+if y < x then insert ((true, x, r) :: acc) y l (* <--- immediate returned*)
+else insert ((false, x, l) :: acc) y r (* <--- immediate returned*)
+(* ------------------------------------------------------------------------ *)
