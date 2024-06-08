@@ -19,7 +19,7 @@ let rec fac n = if n = 0 then 1 else n * fac (n - 1)
 
 let rec fac_tr n =
   let rec helper acc n =
-    if n == 1 then acc (* return accumulator *) else helper (n * acc) (n - 1)
+    if n = 1 then acc (* return accumulator *) else helper (n * acc) (n - 1)
   in
   helper 1 n
 (* ======================================================================== *)
