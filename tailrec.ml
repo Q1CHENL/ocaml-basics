@@ -24,11 +24,12 @@ let rec fac_tr n =
   helper 1 n
 (* ======================================================================== *)
 
-(* function is always a shorthand for "fun arg -> match arg with" *)
+(* "function" keyword is always a shorthand for "fun arg -> match arg with" *)
 let rec remove a = function
   | [] -> []
   | x :: xs -> if x = a then remove a xs else x :: remove a xs
 
+(* Question: How to implement without module List? --> implement a tr rev myself *)
 let rec remove_tr a lst =
   let rec helper acc a lst =
     match lst with
@@ -51,6 +52,7 @@ let rec partition p l =
       let a, b = partition p xs in
       if p x then (x :: a, b) else (a, x :: b)
 
+(* Question: How to implement without List.rev? --> implement a tr rev myself *)
 let rec partition_tr p l =
   (* could also pass the the 2 parts of acc seperately
      e.g helper left right p l *)
