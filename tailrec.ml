@@ -14,6 +14,7 @@
    into the recursive call. ==> helper function with additional argument: accumulator (what has been adding so far)
    and we return the accumulatior in the end, cuz its what has been added so far, namely our final result *)
 
+(* ======================================================================== *)
 (* Simple rewritings: tutorial 8*)
 let rec fac n = if n = 0 then 1 else n * fac (n - 1)
 
@@ -72,6 +73,43 @@ let lst = [ 1; 2; 3; 4; 5 ]
 let part = partition_tr p lst
 
 (* ======================================================================== *)
+type 'a tree = Empty | Node of 'a * 'a tree * 'a tree
+
+(* a tail recursive implemenation of List.rev *)
+let rec rev_tr l =
+  let rec impl l stack =
+    match l with [] -> stack | x :: xs -> impl xs (x :: stack)
+  in
+  impl l []
+
+(* a tail recursive implementation of l1@l2 *)
+let append_tr l1 l2 =
+  let l1_reved = rev l1 in
+  let rec impl l1 stack =
+    match l1 with [] -> stack | x :: xs -> impl xs (x :: stack)
+  in
+  impl l1_reved l2
+
+(* a tail recursive implementaion of inorder traversal of a binary search tree *)
+let inorder_list tree =
+  (* stack: stores the Nodes we traversed so far *)
+  (* acc: stores the final inorder list result *)
+  let rec impl tree stack acc =
+    match tree with
+    | Empty -> (
+        match stack with
+        | [] -> rev acc
+        | n :: ns -> (
+            match n with
+            | Empty -> failwith "Empty should not be pushed onto the stack"
+            | Node (x, l, r) -> impl r ns (x :: acc)))
+    | Node (v, l, r) -> impl l (Node (v, l, r) :: stack) acc
+  in
+  impl tree [] []
+
+
+(* ======================================================================== *)
+(* ======================================================================== *)
 (* Endterm SS23 *)
 (* Multiple choice: which is the following functions is tail-recursive according to the definition in the lecture? *)
 (* non-recursive *)
@@ -123,7 +161,7 @@ let rec f = function
           if x < y then Some (x :: xs') else if x < y then Some xs' else None
       | None -> None)
 
-(* ------------------------------------------------------------------------ *)
+(* ======================================================================== *)
 (* Retake SS23 *)
 
 (* Multiple choice: which is the following is tail recursive? *)
@@ -164,7 +202,7 @@ let rec insert acc y = function
       else insert ((false, x, l) :: acc) y r
 
 (* <--- immediate returned*)
-(* ------------------------------------------------------------------------ *)
+(* ======================================================================== *)
 
 (* Rewriting: Endterm SS23: *)
 (* The function foldr_len takes three arguments: f, z, and xss. The argument xss is a list
@@ -197,7 +235,7 @@ let foldr_len f z xss =
     | xs :: xss -> inner_helper xs :: outer_helper xss
   in
   outer_helper xss
-(* ------------------------------------------------------------------------ *)
+(* ======================================================================== *)
 
 (* Rewriting: Retake SS23: *)
 (* The function foldrs_i_opt takes three arguments: f, z, and xss. The argument xss is a
