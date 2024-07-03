@@ -16,6 +16,9 @@ open Monoid
 
                      let f: ft = fun      x          -> x * 2
              module type F: FT = functor (M: Monoid) -> sig ... end
+
+   The argument of both functor and functor type is a module type, not
+   a module (implementation)
 *)
 
 (* A functor type *)
