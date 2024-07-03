@@ -14,8 +14,8 @@ open Monoid
           type               ft = int                 -> int
    module type MonoidOperations = functor (M: Monoid) -> sig ... end
 
-                    let f: ft = fun      x          -> x * 2
-   compared to  module type F = functor (M: Monoid) -> sig ... end
+                     let f: ft = fun      x          -> x * 2
+             module type F: FT = functor (M: Monoid) -> sig ... end
 *)
 
 (* A functor type *)
@@ -23,6 +23,9 @@ module type MonoidOperations = functor (M : Monoid) -> sig
   val fold : 'a M.t list -> 'a M.t
   val mul : int -> 'a M.t -> 'a M.t
 end
+
+(* Notice: a functor type can only be implemented by a functor (implementation), not another functor type*)
+(* module type F: MonoidOperations = functor (M: Monoid) -> sig ... end ===> cannot compile*)
 
 (* A functor (implementation) *)
 module MonoidOperations : MonoidOperations =

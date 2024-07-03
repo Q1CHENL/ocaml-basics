@@ -44,11 +44,18 @@ type triple = ZeroTripleMonoidModule.triple
 
 (* a module type definition Monoid: *)
 module type Monoid = sig
+  (* The reason why we declare such a type is to define the types of other values below,
+    and further to define the behaviour of the module conforming to this, otherwise the 
+    def of the type can just be omitted *)
   type 'a t
 
   val zero : 'a t
   val plus : 'a t -> 'a t -> 'a t
 end
+
+(* Notice: similar to functor type, a module type cannot be implemented by another module type,
+   but only a module (implementation) *)
+(* module type M: Monoid = sig ... end ===> cannot complile *)
 
 (* Here, "with type 'a t = 'a list" is mandatory as well as "type 'a t = 'a list"
    inside the module definition. 
