@@ -30,22 +30,7 @@
 
 type tree = Empty | Node of (int * int * int)
 
-module FunctionMonoid = struct
-  type t = tree
-  (* type 'a t = 'a -> 'a *)
-
-  let zero x : int = x
-  let plus f g (x : 'a) = f (g x)
-end
-
-let ex_fun_1 = FunctionMonoid.zero 0
-let ex_fun_2 = FunctionMonoid.plus (fun x -> "f " ^ x) (fun x -> "g " ^ x) "y"
-
-module Stack = struct
-  type 'a stack
-end
-
-module type STACK = sig
+module type Stack = sig
   type 'a t
 
   val empty : unit -> 'a t
@@ -54,7 +39,17 @@ module type STACK = sig
   val top : 'a t -> 'a option
 end
 
-module MakeStack () : STACK = struct
+(* module IntStack : Stack with type 'a t = int list = struct
+     type 'a t = int list
+
+     let empty () = []
+     let push x stack = failwith ""
+     let pop = failwith ""
+     let top = failwith ""
+   end *)
+
+(* A functor, takes unit, return a module conforming to the module type Stack *)
+module MakeStack () : Stack = struct
   type 'a t = 'a list
 
   let empty () = []
@@ -62,3 +57,19 @@ module MakeStack () : STACK = struct
   let pop = function [] -> [] | _ :: s -> s
   let top = function [] -> None | x :: _ -> Some x
 end
+
+module Stack = struct
+  type 'a t = 'a list
+  type 'b t = 'b list 
+
+  let empty () = []
+  let push x s = x :: s
+  let pop = function [] -> [] | _ :: s -> s
+  let top = function [] -> None | x :: _ -> Some x
+end
+
+
+let stack = Stack.empty
+let istack = Stack.push 1 []
+let sstack = Stack.push "" []
+let istack = Stack.push 1 sstack
