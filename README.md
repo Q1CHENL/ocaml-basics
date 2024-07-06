@@ -1,4 +1,4 @@
-# Functional Programming and Verification
+# OCaml Basics
 
 ## OCaml Key points
 
