@@ -68,7 +68,9 @@ end
 *)
 module ListMonoid : Monoid with type 'a t = 'a list = struct
   type 'a t = 'a list
-
+  (* We are free to define more types, except for t since it's already used *)
+  type 'a x = 'a list
+  type 'b y
   let zero = []
   let plus l1 l2 = l1 @ l2
 end
@@ -86,6 +88,16 @@ end
 
    See more: https://stackoverflow.com/questions/72674925/module-what-does-with-type-do
 *)
+let example_listmonoid = ListMonoid.plus [ "a"; "b" ] [ "c"; "d"; "e" ]
+
+(* It works if we define a generic ListMonoid directly without conforming to Monoid  *)
+module ListMonoid = struct
+  type 'a t = 'a list
+
+  let zero = []
+  let plus l1 l2 = l1 @ l2
+end
+
 let example_listmonoid = ListMonoid.plus [ "a"; "b" ] [ "c"; "d"; "e" ]
 
 module FunctionMonoid : Monoid with type 'a t = 'a -> 'a = struct

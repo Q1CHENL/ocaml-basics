@@ -30,7 +30,7 @@
 
 type tree = Empty | Node of (int * int * int)
 
-module type Stack = sig
+module type StackType = sig
   type 'a t
 
   val empty : unit -> 'a t
@@ -39,17 +39,32 @@ module type Stack = sig
   val top : 'a t -> 'a option
 end
 
-(* module IntStack : Stack with type 'a t = int list = struct
-     type 'a t = int list
+module IntStack : StackType with type 'a t = int list = struct
+  type 'a t = int list
 
-     let empty () = []
-     let push x stack = failwith ""
-     let pop = failwith ""
-     let top = failwith ""
-   end *)
+  let empty () = []
+  let push x stack = failwith ""
+  let pop = failwith ""
+  let top = failwith ""
+end
 
-(* A functor, takes unit, return a module conforming to the module type Stack *)
-module MakeStack () : Stack = struct
+module StackModule : StackType with type 'a t = 'a list = struct
+  type 'a t = 'a list
+  type 'b x = 'b list
+
+  let empty () = []
+  let push x s = x :: s
+  let pop = function [] -> [] | _ :: s -> s
+  let top = function [] -> None | x :: _ -> Some x
+end
+
+(* A functor, takes a unit, returns a module conforming to the module type Stack *)
+module MakeStack () : StackType with type 'a t = 'a list = StackModule
+module S = MakeStack ()
+
+let s = S.push 1 []
+
+module MakeStack () : StackType = struct
   type 'a t = 'a list
 
   let empty () = []
@@ -58,18 +73,10 @@ module MakeStack () : Stack = struct
   let top = function [] -> None | x :: _ -> Some x
 end
 
-module Stack = struct
-  type 'a t = 'a list
-  type 'b t = 'b list 
+module S = MakeStack ()
 
-  let empty () = []
-  let push x s = x :: s
-  let pop = function [] -> [] | _ :: s -> s
-  let top = function [] -> None | x :: _ -> Some x
-end
-
-
-let stack = Stack.empty
-let istack = Stack.push 1 []
-let sstack = Stack.push "" []
-let istack = Stack.push 1 sstack
+(* Does not compile without "with type 'a t = 'a list"  *)
+let s = S.push 1 []
+let stack = StackModule.empty
+let istack = StackModule.push 1 []
+let sstack = StackModule.push "" []
