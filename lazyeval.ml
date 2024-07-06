@@ -2,12 +2,12 @@
 (* Infinite data structures (e.g. lists) can be realized using the
    concept of lazy evaluation. Instead of constructing the entire
    data structure immediately, we only construct a small part and
-   keep us a means to construct more on demand. 
-   
+   keep us a means to construct more on demand.
+
    In terms of the actual implementation, we often defer the evaluation
-   of future values using a function that only takes a unit and 
+   of future values using a function that only takes a unit and
    returns a new lazy construct with the next value
-   *)
+*)
 
 (* Relevant exercises: w08h03, w08t02 *)
 

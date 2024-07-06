@@ -68,9 +68,11 @@ end
 *)
 module ListMonoid : Monoid with type 'a t = 'a list = struct
   type 'a t = 'a list
+
   (* We are free to define more types, except for t since it's already used *)
   type 'a x = 'a list
   type 'b y
+
   let zero = []
   let plus l1 l2 = l1 @ l2
 end
@@ -80,8 +82,8 @@ end
    'b ListMonoid.t
 
    - [ "a"; "b" ] has type 'a list is because that's the function sig defined internally
-   - an expression was expected of type 'b ListMonoid.t is because the type ListMonoid.t is 
-     not "officially" defined externally so it remains abstract to the compile, therefore 
+   - an expression was expected of type 'b ListMonoid.t is because the type ListMonoid.t is
+     not "officially" defined externally so it remains abstract to the compile, therefore
      the conflict
 
    This is also the reason why we need with type 'a t = 'a list
