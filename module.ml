@@ -77,9 +77,14 @@ end
    [ "a"; "b" ] has type 'a list but an expression was expected of type
    'b ListMonoid.t
 
-   'a list is because that's the function sig defined internally
-   'b ListMonoid.t is because the type ListMonoid.t is not "officially" defined externally
-   so there is conflict
+   - [ "a"; "b" ] has type 'a list is because that's the function sig defined internally
+   - an expression was expected of type 'b ListMonoid.t is because the type ListMonoid.t is 
+     not "officially" defined externally so it remains abstract to the compile, therefore 
+     the conflict
+
+   This is also the reason why we need with type 'a t = 'a list
+
+   See more: https://stackoverflow.com/questions/72674925/module-what-does-with-type-do
 *)
 let example_listmonoid = ListMonoid.plus [ "a"; "b" ] [ "c"; "d"; "e" ]
 
