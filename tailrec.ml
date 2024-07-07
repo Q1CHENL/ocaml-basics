@@ -14,8 +14,8 @@
    into the recursive call. ==> helper function with additional argument: accumulator (what has been adding so far)
    and we return the accumulatior in the end, cuz its what has been added so far, namely our final result *)
 
-(* ======================================================================== *)
-(* Simple rewritings: tutorial 8*)
+(* ======================================================================================== *)
+(* Simple rewritings: tutorial 8 *)
 let rec fac n = if n = 0 then 1 else n * fac (n - 1)
 
 let rec fac_tr n =
@@ -23,7 +23,7 @@ let rec fac_tr n =
     if n = 1 then acc (* return accumulator *) else helper (n * acc) (n - 1)
   in
   helper 1 n
-(* ======================================================================== *)
+(* ======================================================================================== *)
 
 (* "function" keyword is always a shorthand for "fun arg -> match arg with" *)
 let rec remove a = function
@@ -43,7 +43,7 @@ let rec remove_tr a lst =
 
 let lst = [ 1; 1; 2; 3; 1; 4; 5; 6 ]
 let lst = remove_tr 1 lst
-(* ======================================================================== *)
+(* ======================================================================================== *)
 
 (* all elements satisfy p is partitioned into a(the first list), otherwise b(the second list) *)
 let rec partition p l =
@@ -72,7 +72,7 @@ let p a = a > 2
 let lst = [ 1; 2; 3; 4; 5 ]
 let part = partition_tr p lst
 
-(* ======================================================================== *)
+(* ======================================================================================== *)
 type 'a tree = Empty | Node of 'a * 'a tree * 'a tree
 
 (* a tail recursive implemenation of List.rev *)
@@ -107,9 +107,8 @@ let inorder_list tree =
   in
   impl tree [] []
 
-
-(* ======================================================================== *)
-(* ======================================================================== *)
+(* ======================================================================================== *)
+(* ======================================================================================== *)
 (* Endterm SS23 *)
 (* Multiple choice: which is the following functions is tail-recursive according to the definition in the lecture? *)
 (* non-recursive *)
@@ -161,7 +160,7 @@ let rec f = function
           if x < y then Some (x :: xs') else if x < y then Some xs' else None
       | None -> None)
 
-(* ======================================================================== *)
+(* ======================================================================================== *)
 (* Retake SS23 *)
 
 (* Multiple choice: which is the following is tail recursive? *)
@@ -198,11 +197,10 @@ let rec insert acc y = function
   | Leaf -> acc
   | Node (l, x, r) ->
       if y < x then
-        insert ((true, x, r) :: acc) y l (* <--- immediate returned*)
-      else insert ((false, x, l) :: acc) y r
+        insert ((true, x, r) :: acc) y l (* <--- immediately returned*)
+      else insert ((false, x, l) :: acc) y r (* <--- immediately returned*)
 
-(* <--- immediate returned*)
-(* ======================================================================== *)
+(* ======================================================================================== *)
 
 (* Rewriting: Endterm SS23: *)
 (* The function foldr_len takes three arguments: f, z, and xss. The argument xss is a list
@@ -235,7 +233,8 @@ let foldr_len f z xss =
     | xs :: xss -> inner_helper xs :: outer_helper xss
   in
   outer_helper xss
-(* ======================================================================== *)
+
+(* ======================================================================================== *)
 
 (* Rewriting: Retake SS23: *)
 (* The function foldrs_i_opt takes three arguments: f, z, and xss. The argument xss is a
@@ -254,21 +253,17 @@ let rec foldrs_i_opt f z =
   in
   function [] -> [] | xs :: xss -> foldr_i_opt 0 xs :: foldrs_i_opt f z xss
 
-
 (* Def of fold_right *)
 let rec fold_right f l accu =
-  match l with
-    [] -> accu
-  | a::l -> f a (fold_right f l accu)
+  match l with [] -> accu | a :: l -> f a (fold_right f l accu)
 (* val fold_right : ('a -> 'acc -> 'acc) -> 'a list -> 'acc -> 'acc
    fold_right f [a1; ...; an] init is f a1 (f a2 (... (f an init) ...)). Not tail-recursive. *)
 
-   (* fold_left *)
+(* fold_left *)
 let rec fold_left f accu l =
   match l with
-    [] -> accu
-    (* treat the result of (f accu a) as the new accumulater *)
-  | a::l -> fold_left f (f accu a) l
+  | [] -> accu (* treat the result of (f accu a) as the new accumulater *)
+  | a :: l -> fold_left f (f accu a) l
 
 (* equivalence using match *)
 (* here foldrs_i_opt is like the fold_right, f is the first arg function *)
