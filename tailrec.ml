@@ -254,7 +254,7 @@ let foldr_len_tr f z xss =
    performs a right fold over xs using f, with z as the initial value. Since the elements of
    xs are option values, only the x in Some x are passed to f, and None values are ignored.
    Additionally, the index of each value within xs is passed to f, with the index being
-   incremented regardless of whether the value is Some_or None. The values resulting from the
+   incremented regardless of whether the value is Some _ or None. The values resulting from the
    folds are returned in the same order as the input list. *)
 
 let rec foldrs_i_opt f z =
@@ -264,18 +264,6 @@ let rec foldrs_i_opt f z =
     | None :: xs -> foldr_i_opt (i + 1) xs
   in
   function [] -> [] | xs :: xss -> foldr_i_opt 0 xs :: foldrs_i_opt f z xss
-
-(* Def of fold_right *)
-let rec fold_right f l accu =
-  match l with [] -> accu | a :: l -> f a (fold_right f l accu)
-(* val fold_right : ('a -> 'acc -> 'acc) -> 'a list -> 'acc -> 'acc
-   fold_right f [a1; ...; an] init is f a1 (f a2 (... (f an init) ...)). Not tail-recursive. *)
-
-(* fold_left *)
-let rec fold_left f accu l =
-  match l with
-  | [] -> accu (* treat the result of (f accu a) as the new accumulater *)
-  | a :: l -> fold_left f (f accu a) l
 
 (* equivalence using match *)
 (* here foldrs_i_opt is like the fold_right, f is the first arg function *)
