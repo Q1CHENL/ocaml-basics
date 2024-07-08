@@ -257,6 +257,7 @@ let foldr_len_tr f z xss =
    incremented regardless of whether the value is Some _ or None. The values resulting from the
    folds are returned in the same order as the input list. *)
 
+(* The given function *)
 let rec foldrs_i_opt f z =
   let rec foldr_i_opt i = function
     | [] -> z
@@ -265,7 +266,7 @@ let rec foldrs_i_opt f z =
   in
   function [] -> [] | xs :: xss -> foldr_i_opt 0 xs :: foldrs_i_opt f z xss
 
-(* equivalence using match *)
+(* The given function's equivalence using match *)
 (* here foldrs_i_opt is like the fold_right, f is the first arg function *)
 let rec foldrs_i_opt f z xss =
   (* foldr_i_opt is essentially an implementation of fold_right *)
@@ -273,7 +274,7 @@ let rec foldrs_i_opt f z xss =
     match xss with
     | [] ->
         z
-        (*f is like the function applied to fold_right, namely
+        (* f is like the function applied to fold_right, namely
            the first arg, just accepts additional argument index i,
            it is the actual operation on each 'a option of x, just not defined here*)
         (* x is the current elem(list of a' option) to be processed, next is acc *)
@@ -284,6 +285,7 @@ let rec foldrs_i_opt f z xss =
   | [] -> []
   | xs :: xss -> foldr_i_opt 0 xs :: foldrs_i_opt f z xss
 
+(* My rewrite *)
 let rec foldrs_i_opt_tr f z xss =
   let rec foldr_i_opt i xss =
     let rec helper acc i xss =
@@ -300,7 +302,7 @@ let lst = [ 1; 2; 3; 4 ]
 let suml = List.fold_left (fun acc ele -> acc + ele) 0 lst
 let sumr = List.fold_right (fun ele acc -> ele + acc) lst 0
 
-(* solution: *)
+(* Rewrite solution: *)
 module Direct = struct
   (** more direct implementation *)
   let rec rev acc = function [] -> acc | x :: xs -> rev (x :: acc) xs
