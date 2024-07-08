@@ -270,13 +270,13 @@ let rec foldrs_i_opt f z =
 (* here foldrs_i_opt is like the fold_right, f is the first arg function *)
 let rec foldrs_i_opt f z xss =
   (* foldr_i_opt is essentially an implementation of fold_right *)
-  let rec foldr_i_opt i xss =
-    match xss with
-    | [] ->
-        z
+  (* It folds over one list using f *)
+  let rec foldr_i_opt i l =
+    match l with
+    | [] -> z
         (* f is like the function applied to fold_right, namely
            the first arg, just accepts additional argument index i,
-           it is the actual operation on each 'a option of x, just not defined here*)
+           it is the actual operation on each 'a option of x, just not defined here *)
         (* x is the current elem(list of a' option) to be processed, next is acc *)
     | Some x :: xs -> f i x (foldr_i_opt (i + 1) xs)
     | None :: xs -> foldr_i_opt (i + 1) xs
@@ -284,6 +284,12 @@ let rec foldrs_i_opt f z xss =
   match xss with
   | [] -> []
   | xs :: xss -> foldr_i_opt 0 xs :: foldrs_i_opt f z xss
+  (* f is the fold function for foldr_i_opt
+
+    fold_i_opt is the fold function for foldrs_i_opt
+    Actually I think the outer foldrs_i_opt is more like List.map
+    It calls foldr_i_opt on each list and append to the rest
+    *)
 
 (* My rewrite *)
 let rec foldrs_i_opt_tr f z xss =

@@ -2,6 +2,8 @@
 
 (* There are 2 main built-in folding functions *)
 (* 1. fold_left *)
+(* to remember the argument order: acc is on the left side of l 
+   because it folds from the left *)
 let rec fold_left f accu l =
   match l with
   | [] -> accu
@@ -11,6 +13,8 @@ let rec fold_left f accu l =
 (* fold_left f init [b1; ...; bn] is f (... (f (f init b1) b2) ...) bn. *)
 
 (* 2. fold_right *)
+(* to remember the argument order: acc is on the right side of l 
+   because it folds from the right *)
 let rec fold_right f l accu =
   match l with
   | [] -> accu
