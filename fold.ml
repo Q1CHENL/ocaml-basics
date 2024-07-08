@@ -17,6 +17,9 @@ let rec fold_right f l accu =
   | a::l -> f a (fold_right f l accu)
 (* val fold_right : ('a -> 'acc -> 'acc) -> 'a list -> 'acc -> 'acc *)
 (* It goes through the given list from right (an) to left (a1) *)
+(* But since we cannot directly start from the last element, so we have to first go
+   deep into the recursion by calling on the tail of the list to reach the last element, 
+   thus not tail recursive *)
 (* fold_right f [a1; ...; an] init is f a1 (f a2 (... (f an init) ...)). Not tail-recursive. *)
 
 (* Define f1, such that fold_left f1 0 l returns the length of list l *)

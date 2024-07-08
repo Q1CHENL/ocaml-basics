@@ -217,8 +217,8 @@ let rec insert acc y = function
    list in xss).
 
    You may not use:
-   functions from the List, ListLabels, or Seq modules. the OCaml  Tail Modulo Cons
-   ([@tail_mod_cons]) feature (this was not covered in the lecture  and if you don't know
+   functions from the List, ListLabels, or Seq modules. the OCaml Tail Modulo Cons
+   ([@tail_mod_cons]) feature (this was not covered in the lecture and if you don't know
    what it is, you won't accidentally use it).
 *)
 let foldr_len f z xss =
@@ -233,6 +233,18 @@ let foldr_len f z xss =
     | xs :: xss -> inner_helper xs :: outer_helper xss
   in
   outer_helper xss
+
+let foldr_every_list f z l =
+  let l = List.rev l in
+  List.fold_left f z l
+
+let foldr_len_tr f z xss =
+  let res =
+    List.fold_left
+      (fun acc x -> (foldr_every_list f z x, List.length x) :: acc)
+      [] xss
+  in
+  List.rev res
 
 (* ======================================================================================== *)
 
