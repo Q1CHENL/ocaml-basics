@@ -268,28 +268,28 @@ let rec foldrs_i_opt f z =
 
 (* The given function's equivalence using match *)
 (* here foldrs_i_opt is like the fold_right, f is the first arg function *)
+(* z is the initial value for each fold on each list *)
 let rec foldrs_i_opt f z xss =
   (* foldr_i_opt is essentially an implementation of fold_right *)
-  (* It folds over one list using f *)
+  (* It folds over one list using f, with the initial value z 
+     but these 2 are passed in through the outer fucntion foldrs_i_opt,
+     so it doesn't have to accept these 2, but only the rest list to
+     fold over. Additionally, its accepts a index. So basically it's
+     a modified version of fold_right with 2(=3-2+1) parametes *)
   let rec foldr_i_opt i l =
     match l with
     | [] -> z
-        (* f is like the function applied to fold_right, namely
-           the first arg, just accepts additional argument index i,
-           it is the actual operation on each 'a option of x, just not defined here *)
-        (* x is the current elem(list of a' option) to be processed, next is acc *)
     | Some x :: xs -> f i x (foldr_i_opt (i + 1) xs)
     | None :: xs -> foldr_i_opt (i + 1) xs
   in
   match xss with
   | [] -> []
   | xs :: xss -> foldr_i_opt 0 xs :: foldrs_i_opt f z xss
-  (* f is the fold function for foldr_i_opt
 
-    fold_i_opt is the fold function for foldrs_i_opt
-    Actually I think the outer foldrs_i_opt is more like List.map
-    It calls foldr_i_opt on each list and append to the rest
-    *)
+(* foldr_i_opt is like f *)
+let f = fun x -> x + 1
+(* foldrs_i_opt is like List.map *)
+let x = List.map f [1; 2; 3] 
 
 (* My rewrite *)
 let rec foldrs_i_opt_tr f z xss =
@@ -308,7 +308,7 @@ let lst = [ 1; 2; 3; 4 ]
 let suml = List.fold_left (fun acc ele -> acc + ele) 0 lst
 let sumr = List.fold_right (fun ele acc -> ele + acc) lst 0
 
-(* Rewrite solution: *)
+(* Lsg von Rewrite: *)
 module Direct = struct
   (** more direct implementation *)
   let rec rev acc = function [] -> acc | x :: xs -> rev (x :: acc) xs

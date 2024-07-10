@@ -1,8 +1,8 @@
-let a (* : todo *) = (fun a b -> (+) b)
+let a = (fun a b -> (+) b)
 (* a on the right side can be safely removed because its not used *)
 (* The operator + is underlied by a function called (+) which takes 2 int and returns the sum of them *)
 
-let b (* : todo *) = (fun a b -> List.fold_left b 1 (List.map ( * ) a))
+let b = (fun a b -> List.fold_left b 1 (List.map ( * ) a))
 (* 
 If a is [1;2;3], then (List.map ( * ) a) produces [(x) 1; (x) 2; (x)3]
 b takes every func in that list and do something with acc and return the new acc. acc starts with 1
@@ -11,9 +11,9 @@ let res = b [1;2;3] (fun acc x -> acc + (x acc))
 val res: int = 24
 *)
 
-let c (* : todo *) = (fun a b c -> c (a + b)) 3
+let c = (fun a b c -> c (a + b)) 3
 (* 
-Breakdown
+Breakdown:
 Anonymous Function Definition:
 The code starts by defining an anonymous function using fun. The function has three parameters: a, b, and c.
 
@@ -42,14 +42,14 @@ In other words, the function x can be described as:
 let x = fun b c -> c (3 + b)
 *)
 
-let d (* : todo *) = (fun a b c -> b (c a) :: [a]) "x"
+let d = (fun a b c -> b (c a) :: [a]) "x"
 (* 
 d = fun b c -> b (c "a") :: ["a"]
 It creates a list, which contains 2 elements: "a" and "a" after processed by c and then b
 Similar to c
 *)
 
-let e (* : todo *) = (let x = List.map in x (<))
+let e = (let x = List.map in x (<))
 (* 
 e takes one argument of list and returns a list of < applied to everyone element in the original list
 Example: 

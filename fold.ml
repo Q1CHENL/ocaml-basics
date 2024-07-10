@@ -24,6 +24,9 @@ let rec fold_right f l accu =
 (* But since we cannot directly start from the last element, so we have to first go
    deep into the recursion by calling on the tail of the list to reach the last element, 
    thus not tail recursive *)
+(* Hence the main difference to fold_left is that, in fold_left, f is applied in every step,
+   while in fold_right, it goes deep to reach the last element first, then f is applied 
+   layer by layer out till the first layer *)
 (* fold_right f [a1; ...; an] init is f a1 (f a2 (... (f an init) ...)). Not tail-recursive. *)
 
 (* Define f1, such that fold_left f1 0 l returns the length of list l *)
