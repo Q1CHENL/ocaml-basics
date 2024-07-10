@@ -4,17 +4,18 @@
 (* 1. fold_left *)
 (* to remember the argument order: acc is on the left side of l 
    because it folds from the left *)
+(* fold_left f init [b1; ...; bn] is f (... (f (f init b1) b2) ...) bn. *)
 let rec fold_left f accu l =
   match l with
   | [] -> accu
   | a::l -> fold_left f (f accu a) l
 (* val fold_left : ('acc -> 'a -> 'acc) -> 'acc -> 'a list -> 'acc *)
 (* It goes through the given list from left (b1) to right (bn), thus the name *)
-(* fold_left f init [b1; ...; bn] is f (... (f (f init b1) b2) ...) bn. *)
 
 (* 2. fold_right *)
 (* to remember the argument order: acc is on the right side of l 
-   because it folds from the right *)
+because it folds from the right *)
+(* fold_right f [a1; ...; an] init is f a1 (f a2 (... (f an init) ...)). Not tail-recursive. *)
 let rec fold_right f l accu =
   match l with
   | [] -> accu
@@ -27,7 +28,6 @@ let rec fold_right f l accu =
 (* Hence the main difference to fold_left is that, in fold_left, f is applied in every step,
    while in fold_right, it goes deep to reach the last element first, then f is applied 
    layer by layer out till the first layer *)
-(* fold_right f [a1; ...; an] init is f a1 (f a2 (... (f an init) ...)). Not tail-recursive. *)
 
 (* Define f1, such that fold_left f1 0 l returns the length of list l *)
 let f1 acc v = acc + 1

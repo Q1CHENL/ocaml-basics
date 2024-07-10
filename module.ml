@@ -17,6 +17,7 @@ module IntTripleMonoid = struct
     let (Triple (a, b, c)) = t1 in
     let (Triple (d, e, f)) = t2 in
     Triple (a + d, b + e, c + f)
+  ;;
 end
 
 (* This module can be used to hide the function plus of module IntTripleMonoid by
@@ -92,7 +93,7 @@ end
 *)
 let example_listmonoid = ListMonoid.plus [ "a"; "b" ] [ "c"; "d"; "e" ]
 
-(* It works if we define a generic ListMonoid directly without conforming to Monoid  *)
+(* It works if we define a generic ListMonoid directly without conforming to Monoid *)
 module ListMonoid = struct
   type 'a t = 'a list
 
@@ -112,13 +113,11 @@ end
 let ex_fun_1 = FunctionMonoid.zero "a"
 let ex_fun_2 = FunctionMonoid.plus (fun x -> "f " ^ x) (fun x -> "g " ^ x) "y"
 
-module PairListFlippedListMonoid : Monoid with type 'a t = 'a list * 'a list =
-struct
+module PairListFlippedListMonoid : Monoid with type 'a t = 'a list * 'a list = struct
   type 'a t = 'a list * 'a list
 
-  let zero = ([], [])
-  let plus pair1 pair2 = (fst pair2 @ fst pair1, snd pair1 @ snd pair2)
+  let zero = [], []
+  let plus pair1 pair2 = fst pair2 @ fst pair1, snd pair1 @ snd pair2
 end
 
-let ex_plf =
-  PairListFlippedListMonoid.plus ([ "a" ], [ "x"; "y" ]) ([ "b"; "c" ], [ "z" ])
+let ex_plf = PairListFlippedListMonoid.plus ([ "a" ], [ "x"; "y" ]) ([ "b"; "c" ], [ "z" ])

@@ -28,7 +28,9 @@
    by a module.
 *)
 
-type tree = Empty | Node of (int * int * int)
+type tree =
+  | Empty
+  | Node of (int * int * int)
 
 module type StackType = sig
   type 'a t
@@ -54,8 +56,16 @@ module StackModule : StackType with type 'a t = 'a list = struct
 
   let empty () = []
   let push x s = x :: s
-  let pop = function [] -> [] | _ :: s -> s
-  let top = function [] -> None | x :: _ -> Some x
+
+  let pop = function
+    | [] -> []
+    | _ :: s -> s
+  ;;
+
+  let top = function
+    | [] -> None
+    | x :: _ -> Some x
+  ;;
 end
 
 (* A functor, takes a unit, returns a module conforming to the module type Stack *)
@@ -69,13 +79,21 @@ module MakeStack () : StackType = struct
 
   let empty () = []
   let push x s = x :: s
-  let pop = function [] -> [] | _ :: s -> s
-  let top = function [] -> None | x :: _ -> Some x
+
+  let pop = function
+    | [] -> []
+    | _ :: s -> s
+  ;;
+
+  let top = function
+    | [] -> None
+    | x :: _ -> Some x
+  ;;
 end
 
 module S = MakeStack ()
 
-(* Does not compile without "with type 'a t = 'a list"  *)
+(* Does not compile without "with type 'a t = 'a list" *)
 let s = S.push 1 []
 let stack = StackModule.empty
 let istack = StackModule.push 1 []
