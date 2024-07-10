@@ -340,20 +340,39 @@ let f x = x + 1
    use List.rev_map instead and use List.rev to restore the order *)
 let x = List.map f [ 1; 2; 3 ]
 
+(* Use rev_tr because List.rev is not allowed *)
+let map_tr f l =
+  let rec impl f l acc =
+    match l with
+    | [] -> acc
+    | x :: xs -> impl f xs (f x :: acc)
+  in
+  rev_tr (impl f l [])
+;;
+
+let len_tr l =
+  let rec impl l acc =
+    match l with
+    | [] -> acc
+    | x :: xs -> impl xs (acc + 1)
+  in
+  impl l 0
+;;
+
 (* My rewrite: *)
 let foldrs_i_opt_tr f z xss =
-  let rev_xss = List.rev xss in
+  (* let rev_xss = rev_tr xss in *)
   let rec foldr_i_opt i l acc =
     match l with
     | [] -> acc
     | Some x :: xs -> foldr_i_opt (i - 1) xs (f i x acc)
     | None :: xs -> foldr_i_opt (i - 1) xs acc
   in
-  List.rev_map
+  map_tr
     (fun l ->
-      let rl = List.rev l in
-      foldr_i_opt (List.length l - 1) rl z)
-    rev_xss
+      let rl = rev_tr l in
+      foldr_i_opt (len_tr l - 1) rl z)
+    xss
 ;;
 
 (* Test function *)
