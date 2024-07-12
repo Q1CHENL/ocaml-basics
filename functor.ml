@@ -28,21 +28,21 @@ open Monoid
 
    Comparison of function implementation and functor implementation:
 
-    1. using keyword fun and functor, its actually a anynomous function/functor in the body
-       let f: ft = fun      x          -> x * 2
-    module F: FT = functor (M: Monoid) -> struct let f x = x * 2 ... end
-
-    2. direct implementation without keyword fun or functor
-       let f (x:    int): int        = x * 2
-    module F (M: Monoid): ListMonoid = struct ... end
-    Here ": int" and ": ListMonoid" before the equal sign specifies the return type,
-    not the conforming type
+   1. using keyword fun and functor, its actually a anynomous function/functor in the body
+      let f: ft = fun      x          -> x * 2
+   module F: FT = functor (M: Monoid) -> struct let f x = x * 2 ... end
+   
+   2. direct implementation without keyword fun or functor
+      let f (x:    int): int        = x * 2
+   module F (M: Monoid): ListMonoid = struct ... end
+   Here ": int" and ": ListMonoid" after the argument specifies the return type, not the 
+   conforming type. Or more specifically, the represents the type of the express before it.
+   Here, int is the type of f (x: int), ListMonoid is the type of F (M: Monoid), because 
+   remember that, in ocaml, everything including function is a value, has its own type.
 
    The argument of both functor and functor type is a module/functor type, not
-   a module/functor (implementation)
-
-   The arguments of functor/functor type are module type/functor types, not module/functor (implementation)
-   This is intuitive
+   a module/functor (implementation). This should actually be intutive, cause of course the
+   argument specified in the def. of function/functor should a type, not an actually value.
 *)
 
 module type Monoid = sig
@@ -75,7 +75,6 @@ module type FoldAndMulModuleType = sig
   val mul : int -> 'a t -> 'a t
 end
 
-module type MonoidOperationsFunctorType = functor (M : Monoid) -> FoldAndMulModuleType with type 'a t = 'a M.t
 
 (* A functor type *)
 (* Takes an argument of type Monoid, returns a module *)
@@ -93,9 +92,17 @@ end
 module type MonoidOperationsFunctorType = functor (M : Monoid) -> FoldAndMulModuleType with type 'a t = 'a M.t
 
 
-(* We can use = to directly create new types from the old ones *)
-(* module type MonoidOperationsFunctorType2 = MonoidOperationsFunctorType *)
+(* We can use = to directly create new types with new names from the old ones *)
+module type MonoidOperationsFunctorType2 = MonoidOperationsFunctorType
 
+
+(* Compared to the similar function defination *)
+(* Whenever this is argument right after the name of our functor, the thing after : is not the type 
+   our functor conforms to, but the return type, which can be a module or a functor, it's similar to
+   the function definition below, just that the right hand side fun x y -> x * y is not allowed in function 
+   here it returns a functor of type MonoidOperationsFunctorType *)
+(* let f (x : int) (y : int) : int = fun x y -> x * y *)
+module FuntorWithFunctorArg (FT : MonoidOperationsFunctorType) = functor (FT : MonoidOperationsFunctorType) -> struct end 
 
 (* A functor that conforms to the functor type above *)
 (* It returns a module with 2 funtions: fold and mul.
@@ -107,16 +114,6 @@ module type MonoidOperationsFunctorType = functor (M : Monoid) -> FoldAndMulModu
    Remember, functor is very flexible, it's really just like function, returns what we specify,
    not neccessarily includes the functions of the argument
 *)
-
-(* Compared to the similar function defination *)
-(* Whenever this is argument right after the name of our functor, the thing after : is not the type 
-   our functor conforms to, but the return type, which can be a module or a functor, it's similar to
-   the function definition below, just that the right hand side fun x y -> x * y is not allowed in function 
-   here it returns a functor of type MonoidOperationsFunctorType *)
-(* let f (x : int) (y : int) : int = fun x y -> x * y *)
-module FuntorWithFunctorArg (FT : MonoidOperationsFunctorType) = functor (FT : MonoidOperationsFunctorType) -> struct end 
-
-
 let f = fun x -> x + 1
 let f: int -> int = fun x -> x + 1
 (* Here it works also without ": MonoidOperationsFunctorType", just like we don't explicitly
@@ -162,8 +159,8 @@ let i_f = I.fold [ 1; 2; 4 ]
 
 (* The second way to define a functor: A direct functor definition without using the keyword functor, 
    compared to the function def above Monoid is not the functor type it conforms to, but the return 
-   type of module, namely the type after apply to the argument M,　therefore we have to provide 'a t, 
-   zero and plus. 
+   type of module, or the type of MonoidOperationsFunctor2 (M: Monoid) as explained before, namely the
+   type after apply to the argument M,　therefore we have to provide 'a t, zero and plus. 
 
   　Note that the return type can be both module type or a functor type *)
 let f (x : int) (y : int) : int = x * y
@@ -174,7 +171,7 @@ module MonoidOperationsFunctor2 (M: Monoid): FoldAndMulModuleType with type 'a t
   let rec mul n x = match n with 0 -> M.zero | _ -> M.plus x (mul (n - 1) x)
 end
 
-(* The equivalent definition as above, except that the return type is not annotated *)
+(* The equivalent definition as above, except that the return type is not annotated, which is allowed *)
 let f (x : int) (y : int) = x * y
 module MonoidOperationsFunctor2 (M: Monoid) = struct
   (* Don't need type 'a t = 'a M.t because we did not specify that 
@@ -189,16 +186,15 @@ module MonoidOperationsFunctor3 (M: Monoid) (N: Monoid) =  struct
   let rec mulm n x = match n with 0 -> M.zero | _ -> M.plus x (mulm (n - 1) x)
 end
 
-(* Also for the first kind of definition: *)
+(* Multiple arguments is valid for the first kind of definition: *)
 (* we don't conform MonoidOperationsType here because it only takes one argument *)
 module MonoidOperationsFunctor3 = functor (M: Monoid) (N: Monoid) -> struct 
   let rec foldn l = match l with [] -> N.zero | x :: xs -> N.plus x (foldn xs)
   let rec mulm n x = match n with 0 -> M.zero | _ -> M.plus x (mulm (n - 1) x)
 end 
 
-(* We can also create functors by conforming to a functor type 
-   and make it equal to an existing implementation, which already conforms
-   to that type *)
+(* We can also create functors by conforming to a functor type and make it equal 
+   to an existing implementation, which already conforms to that type *)
 module MakeMonoidOperations : MonoidOperationsFunctorType = MonoidOperationsFunctor
 
 (* how we use it *)
@@ -228,7 +224,7 @@ module FuntorWithFunctorArg = functor () -> struct end
 (* Regarding the type annotation, the biggest difference between functor and function is that
    all the arguments of a functor must be annotated *)
 
-(* Notice: a functor type can only be implemented by a functor (implementation), not another functor type *)
+(* Notice: a functor type can only be implemented by a functor (implementation), not another functor type (intuitive) *)
 (* module type F: MonoidOperationsFunctorType = functor (M: Monoid) -> sig ... end ===> cannot compile *)
 
 (* Usage example of the functor *)
