@@ -36,8 +36,8 @@ open Monoid
    > module F: FT = functor (M: Monoid) -> struct let f x = x * 2 ... end
    
    > 2. direct implementation without keyword fun or functor
-   >    let f (x:    int): int        = x * 2
-    module F (M: Monoid): ListMonoid = struct ... end
+   >     let f (x:    int): int        = x * 2
+   >  module F (M: Monoid): ListMonoid = struct ... end
    Here ": int" and ": ListMonoid" after the argument specifies the return type, not the 
    conforming type. 
    > Or more specifically, they represent the types of the expressions before them.
@@ -103,13 +103,18 @@ module type MonoidOperationsFunctorType = functor (M : Monoid) -> FoldAndMulModu
 module type MonoidOperationsFunctorType2 = MonoidOperationsFunctorType
 
 
-(* Compared to the similar function defination *)
-(* Whenever this is argument right after the name of our functor, the thing after : is not the type 
-   our functor conforms to, but the return type, which can be a module or a functor, it's similar to
-   the function definition below, just that the right hand side fun x y -> x * y is not allowed in function 
-   here it returns a functor of type MonoidOperationsFunctorType *)
-(* let f (x : int) (y : int) : int = fun x y -> x * y *)
-module FuntorWithFunctorArg (FT : MonoidOperationsFunctorType) = functor (FT : MonoidOperationsFunctorType) -> struct end 
+(* Compare functor implementation and function implementation: 
+   > Whenever there are arguments right after the name of the functor, the thing after ":" is not the type 
+   > our functor conforms to, but the return type, which can be a module type or a functor type. And the 
+   > right-hand side should have exactly the same type.
+   It's similar to
+   the function definition below, just that the right hand side "fun x y -> x * y" is not allowed in function.
+   Here it returns a functor of type MonoidOperationsFunctorType.
+
+ let f (x : int) (y : int) : int = fun x y -> x * y *)
+ let f : int = 5
+ (* TODO: In ocaml, the type after ":" essentially denotes the types of the stuff before it, whether its in the context of value, function, module or functor *)
+module FuntorWithFunctorArg = functor (FT : MonoidOperationsFunctorType) -> struct end 
 
 (* A functor that conforms to the functor type above *)
 (* It returns a module with 2 funtions: fold and mul.
