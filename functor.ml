@@ -5,44 +5,48 @@
 open Monoid
 
 (* First, what is a functor?
-   It's a higher order function which takes a module/functor and returns a module/functor.
-   In essence, it's really just like function, takes something, do some processing, return
-   something. Just that here the arguments and the return values are all module/functors
+   > It's a higher order function which takes a module/functor and returns a module/functor.
+   The term "higher-order" refers to functions that either:
+   1. Take other functions as arguments, or
+   2. Return functions as results.
+
+   > In essence, it's really just like function, takes something, do some processing, returns
+   > something. Just that here the arguments and the return values are all module/functors
 
    In the topic functor, there are 2 types of things:
-   - functor type: the type of the functor
-   - functor (implementation): the actual implementation of the functor
-   The relation is just like module type and module (implementation)
-
-   Just view functor as a function, and functor type as function type
+   > functor type: the type of the functor
+   > functor (implementation): the actual implementation of the functor
+   They are just like module type and module (implementation), we can just view functor as a 
+   function, and functor type as function type
 
    Comparison of function type and functor type:
 
-          type ft = int                 -> int
-   module type FT = functor (M: Monoid) -> sig val f: 'a -> 'a ... end
+   >        type ft = int                 -> int
+   > module type FT = functor (M: Monoid) -> sig val f: 'a -> 'a ... end
 
-   This is only way to define a functor type.
+   > This is only way to define a functor type.
    Note that after the name FT, no parameters are allowed, all parameters are defined 
    after the keyword functor.
 
 
    Comparison of function implementation and functor implementation:
 
-   1. using keyword fun and functor, its actually a anynomous function/functor in the body
-      let f: ft = fun      x          -> x * 2
-   module F: FT = functor (M: Monoid) -> struct let f x = x * 2 ... end
+   > 1. using keyword fun and functor, its actually a anynomous function/functor in the body
+   >    let f: ft = fun      x          -> x * 2
+   > module F: FT = functor (M: Monoid) -> struct let f x = x * 2 ... end
    
-   2. direct implementation without keyword fun or functor
-      let f (x:    int): int        = x * 2
-   module F (M: Monoid): ListMonoid = struct ... end
+   > 2. direct implementation without keyword fun or functor
+   >    let f (x:    int): int        = x * 2
+    module F (M: Monoid): ListMonoid = struct ... end
    Here ": int" and ": ListMonoid" after the argument specifies the return type, not the 
-   conforming type. Or more specifically, the represents the type of the express before it.
-   Here, int is the type of f (x: int), ListMonoid is the type of F (M: Monoid), because 
-   remember that, in ocaml, everything including function is a value, has its own type.
+   conforming type. 
+   > Or more specifically, they represent the types of the expressions before them.
+   Here, int is the type of "f (x: int)", ListMonoid is the type of "F (M: Monoid)", because in 
+   ocaml, everything including function is a value, and has its own type.
 
    The argument of both functor and functor type is a module/functor type, not
-   a module/functor (implementation). This should actually be intutive, cause of course the
-   argument specified in the def. of function/functor should a type, not an actually value.
+   a module/functor (implementation). This is actually intutive, cuz of course the
+   argument specified in the def of function/functor should a type, not an actual value.
 *)
 
 module type Monoid = sig
@@ -76,11 +80,11 @@ module type FoldAndMulModuleType = sig
 end
 
 
-(* A functor type *)
-(* Takes an argument of type Monoid, returns a module *)
-(* It cannot be directly used to create modules, but rather
-   is to be conformed to by a implementation of a functor *)
-(* As said before, this is the only way to formally define a functor type except for direct assignment (see below)  *)
+(* A functor type 
+   > It takes an argument of type Monoid, returns a module 
+   It cannot be directly used to create modules, but rather
+   is to be conformed to by a implementation of a functor 
+   As said before, this is the only way to formally define a functor type except for direct assignment (see below)  *)
 module type MonoidOperationsFunctorType = functor (M : Monoid) -> sig
   (* include Monoid *)
 
@@ -88,9 +92,12 @@ module type MonoidOperationsFunctorType = functor (M : Monoid) -> sig
   val mul : int -> 'a M.t -> 'a M.t
 end
 
-(* Or we can do this seperately, leveraging the existing module type *)
-module type MonoidOperationsFunctorType = functor (M : Monoid) -> FoldAndMulModuleType with type 'a t = 'a M.t
 
+(* Or we can just make it return an existing module type 
+   > Note that it should return a module type, not an actual module,
+   > an actual module is returned in the implemenation of a functor    
+*)
+module type MonoidOperationsFunctorType = functor (M : Monoid) -> FoldAndMulModuleType with type 'a t = 'a M.t
 
 (* We can use = to directly create new types with new names from the old ones *)
 module type MonoidOperationsFunctorType2 = MonoidOperationsFunctorType
