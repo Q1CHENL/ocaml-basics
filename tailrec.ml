@@ -1,18 +1,20 @@
 (* Write tail recursive versions of the following functions (without changing their types) *)
 
-(* For a function f to be tail recursive, ALL recursive calls within should be tail call, which
-   means no further computation with results of any recursive call!
+(* > For a function f to be tail recursive, ALL recursive calls within should be tail call, which
+   > means no further computation with results of any recursive call!
 
-   if f and g call each other, and g is not tail recursive then f is also not even it seems to be at the first glance.
+   If f and g call each other, and g is not tail recursive then f is also not even it seems to be at the first glance.
    Because f calls g, and g has non-tail calls, which means f also has non-tail calls.
 
    In addition, all functions (even non-recursive) used within need to be tail recursive
-   according to specific problem statements. *)
+   according to specific problem statements.
 
-(* The general idea behind tail-recursive computation: instead of waiting for the nested call to complete
+   The general idea behind tail-recursive computation: instead of waiting for the nested call to complete
    and then adding something to the output, we do the adding first and pass what has been "added so far"
-   into the recursive call. ==> helper function with additional argument: accumulator (what has been adding so far)
-   and we return the accumulatior in the end, cuz its what has been added so far, namely our final result *)
+   into the recursive call.
+   > ==> a helper function with an additional argument: accumulator (what has been adding so far),
+   > and we return the accumulatior in the end, cuz it's what has been added so far, representing our final result
+*)
 
 (* ======================================================================================== *)
 (* Simple rewritings: tutorial 8 *)
